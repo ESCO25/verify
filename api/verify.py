@@ -1,6 +1,3 @@
-"""
-api/verify.py — Vercel Serverless Function (Fixed)
-"""
 import json
 import os
 import hashlib
