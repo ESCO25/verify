@@ -19,9 +19,5 @@
       "src": "/(.*)",
       "dest": "/public/$1"
     }
-  ],
-  "env": {
-    "MONGO_URI": "@mongo_uri",
-    "BOT_SECRET": "@bot_secret"
-  }
+  ]
 }
