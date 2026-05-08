@@ -3,9 +3,17 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>التحقق من الهوية — GREEG</title>
+<title>GREEG — التحقق المتقدم</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet"/>
 <style>
+  :root {
+    --gold-gradient: linear-gradient(90deg, #ffd700, #fff3b0, #ffcc00, #fff3b0, #ffd700);
+    --green-3d: linear-gradient(145deg, #2ecc71, #27ae60);
+    /* استايل النص الواضح: أبيض مع إطار أسود وظل */
+    --text-glow: white;
+    --text-outline: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 3px 3px 8px rgba(0,0,0,0.6);
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -16,623 +24,328 @@
     justify-content: center;
     overflow: hidden;
     position: relative;
-    background: #1a0a00;
+    background: url('https://i.imgur.com/NO67yFT.jpeg') center/cover no-repeat fixed;
   }
 
-  /* خلفية Hay Day */
-  .bg-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background:
-      radial-gradient(ellipse at 60% 0%, rgba(255,160,30,0.18) 0%, transparent 60%),
-      radial-gradient(ellipse at 10% 100%, rgba(80,200,80,0.12) 0%, transparent 50%),
-      linear-gradient(160deg, #1a0a00 0%, #2d1500 40%, #1a2800 100%);
-  }
-
-  /* لوغو القناة في الخلفية */
-  .bg-logo {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 420px;
-    height: 420px;
+  /* الفقاعات (اللوغو الصغير المتحرك) */
+  .bubble {
+    position: absolute;
     background: url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat;
-    opacity: 0.04;
-    z-index: 0;
-    pointer-events: none;
+    bottom: -150px;
+    animation: floatUp 12s infinite ease-in;
+    z-index: 1;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+    opacity: 0.6;
   }
 
-  /* دوائر زخرفية */
-  .deco-circle {
-    position: fixed;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .dc1 {
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(255,150,0,0.07) 0%, transparent 70%);
-    top: -150px; right: -150px;
-    animation: pulse1 6s ease-in-out infinite;
-  }
-  .dc2 {
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(50,180,50,0.06) 0%, transparent 70%);
-    bottom: -100px; left: -100px;
-    animation: pulse2 8s ease-in-out infinite;
-  }
-  @keyframes pulse1 { 0%,100%{opacity:1} 50%{opacity:0.5} }
-  @keyframes pulse2 { 0%,100%{opacity:1} 50%{opacity:0.6} }
-
-  /* زخارف نباتية SVG */
-  .leaf {
-    position: fixed;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.12;
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+    20% { opacity: 0.7; }
+    80% { opacity: 0.7; }
+    100% { transform: translateY(-120vh) rotate(360deg) scale(1.2); opacity: 0; }
   }
 
   .container {
     position: relative;
-    z-index: 1;
+    z-index: 10;
     width: 100%;
-    max-width: 440px;
+    max-width: 450px;
     padding: 20px;
   }
 
-  /* البطاقة */
-  .card {
-    background: linear-gradient(160deg, rgba(50,28,5,0.97) 0%, rgba(30,18,3,0.99) 100%);
-    border: 2px solid rgba(255,165,50,0.35);
-    border-radius: 24px;
-    padding: 36px 32px 32px;
-    box-shadow:
-      0 0 0 1px rgba(255,165,50,0.1),
-      0 32px 80px rgba(0,0,0,0.7),
-      inset 0 1px 0 rgba(255,255,255,0.05);
-    animation: slideUp 0.55s cubic-bezier(0.16,1,0.3,1);
+  /* الإطار الذهبي المتحرك */
+  .gold-border-wrap {
     position: relative;
-    overflow: hidden;
+    padding: 6px; 
+    border-radius: 35px;
+    background: linear-gradient(90deg, #ffd700, #ffffff, #ffd700, #ffffff);
+    background-size: 300% 300%;
+    animation: goldFlow 3s linear infinite;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
 
-  /* شريط ذهبي علوي */
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(255,185,60,0.8), rgba(255,220,100,1), rgba(255,185,60,0.8), transparent);
-    border-radius: 24px 24px 0 0;
+  @keyframes goldFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
   }
 
-  @keyframes slideUp {
-    from { opacity:0; transform:translateY(28px) scale(0.97); }
-    to   { opacity:1; transform:translateY(0) scale(1); }
-  }
-
-  /* الهيدر */
-  .header {
+  /* اللوحة الخضراء 3D */
+  .card {
+    background: var(--green-3d);
+    border-radius: 30px;
+    padding: 40px 30px;
     text-align: center;
-    margin-bottom: 24px;
+    position: relative;
+    box-shadow: inset 0 6px 20px rgba(255,255,255,0.4), inset 0 -6px 15px rgba(0,0,0,0.3);
+    border: 1.5px solid rgba(255,255,255,0.2);
   }
 
-  /* صورة البوت */
-  .bot-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 20px;
-    border: 3px solid rgba(255,165,50,0.4);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(255,150,0,0.15);
-    margin: 0 auto 14px;
-    display: block;
-    object-fit: cover;
+  .header img {
+    width: 110px;
+    height: 110px;
+    border-radius: 25px;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
   }
 
+  /* تنسيق النصوص داخل اللوحة */
   .brand-name {
-    font-size: 26px;
+    font-size: 32px; /* تكبير الخط */
     font-weight: 900;
-    letter-spacing: 3px;
-    color: #FFD060;
-    text-shadow: 0 2px 12px rgba(255,180,0,0.4);
-    margin-bottom: 4px;
+    color: var(--text-glow);
+    text-shadow: var(--text-outline);
+    margin-bottom: 8px;
   }
 
   .brand-sub {
-    font-size: 12px;
-    color: rgba(255,200,100,0.5);
-    letter-spacing: 1px;
+    font-size: 16px; /* تكبير الخط */
+    font-weight: 700;
+    color: var(--text-glow);
+    text-shadow: var(--text-outline);
+    margin-bottom: 30px;
+    opacity: 0.9;
   }
 
-  /* فاصل */
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,165,50,0.25), transparent);
-    margin: 20px 0;
-  }
-
-  /* شريط التقدم */
   .progress-wrap {
-    background: rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.3);
+    height: 12px;
     border-radius: 10px;
-    height: 4px;
-    margin-bottom: 24px;
-    overflow: hidden;
-    border: 1px solid rgba(255,165,50,0.1);
+    margin-bottom: 30px;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
   }
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #c97800, #FFB020, #FFD060);
+    width: 0%;
+    background: linear-gradient(90deg, #f1c40f, #f39c12);
     border-radius: 10px;
-    transition: width 0.5s cubic-bezier(0.16,1,0.3,1);
-    box-shadow: 0 0 8px rgba(255,180,0,0.5);
+    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.8);
   }
 
-  /* المراحل */
-  .step { display: none; animation: fadeIn 0.35s ease; }
-  .step.active { display: block; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-
-  /* المرحلة 1 — زر "لست روبوت" */
   .captcha-box {
-    background: rgba(255,255,255,0.03);
-    border: 1.5px solid rgba(255,165,50,0.2);
-    border-radius: 14px;
-    padding: 20px 20px 20px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    padding: 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 20px;
-    user-select: none;
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
   }
-  .captcha-box:hover {
-    border-color: rgba(255,165,50,0.45);
-    background: rgba(255,165,50,0.05);
-  }
-  .captcha-box.checking {
-    border-color: rgba(255,165,50,0.6);
-    pointer-events: none;
-  }
-  .captcha-box.done {
-    border-color: rgba(80,200,80,0.5);
-    background: rgba(80,200,80,0.04);
-    pointer-events: none;
-  }
+  .captcha-box:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.02); }
 
-  .captcha-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  .captcha-label {
+    font-size: 20px; /* تكبير الخط */
+    font-weight: 900;
+    color: var(--text-glow);
+    text-shadow: var(--text-outline);
   }
 
   .checkbox-outer {
-    width: 26px;
-    height: 26px;
-    border: 2px solid rgba(255,165,50,0.45);
-    border-radius: 5px;
-    background: rgba(255,255,255,0.05);
+    width: 32px;
+    height: 32px;
+    border: 3px solid white;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.25s;
   }
-  .captcha-box.done .checkbox-outer {
-    background: #3db046;
-    border-color: #3db046;
-  }
-  .check-svg {
-    display: none;
-    animation: checkPop 0.3s cubic-bezier(0.16,1,0.3,1);
-  }
+
+  .captcha-box.done .checkbox-outer { background: #ffd700; border-color: #ffd700; }
+  .check-svg { display: none; stroke: #27ae60; stroke-width: 5; fill: none; }
   .captcha-box.done .check-svg { display: block; }
-  .spin-svg { display: none; animation: spin 0.7s linear infinite; }
-  .captcha-box.checking .spin-svg { display: block; }
-  .captcha-box.checking .checkbox-outer { border-color: rgba(255,165,50,0.6); }
-  @keyframes checkPop { from{transform:scale(0)} to{transform:scale(1)} }
-  @keyframes spin { to{transform:rotate(360deg)} }
 
-  .captcha-label {
-    font-size: 15px;
-    font-weight: 700;
-    color: #e8c880;
-  }
-
-  .captcha-logo-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .captcha-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    object-fit: cover;
-    opacity: 0.8;
-  }
-  .captcha-brand {
-    font-size: 9px;
-    color: rgba(255,200,100,0.4);
-    letter-spacing: 0.5px;
-  }
-
-  /* زر التأكيد */
   .btn-main {
     width: 100%;
-    padding: 15px;
+    padding: 18px;
     border: none;
-    border-radius: 14px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 16px;
+    border-radius: 15px;
+    background: #ffd700;
+    color: #27ae60;
+    font-size: 22px; /* تكبير الخط */
     font-weight: 900;
     cursor: pointer;
-    letter-spacing: 1px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s;
-    background: linear-gradient(160deg, #c97800, #FFB020 50%, #e09000);
-    color: #3d1e00;
-    box-shadow: 0 6px 24px rgba(200,120,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
-    border-bottom: 3px solid rgba(0,0,0,0.3);
+    box-shadow: 0 8px 0 #b7950b;
+    transition: 0.2s;
   }
-  .btn-main:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 32px rgba(200,120,0,0.55), inset 0 1px 0 rgba(255,255,255,0.25);
-  }
-  .btn-main:active:not(:disabled) {
-    transform: translateY(1px);
-    border-bottom-width: 1px;
-  }
-  .btn-main:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  .btn-main:active { transform: translateY(5px); box-shadow: 0 3px 0 #b7950b; }
+  .btn-main:disabled { filter: grayscale(1); opacity: 0.6; cursor: not-allowed; }
 
-  /* مرحلة الفحص */
-  .scan-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #e8c880;
-    margin-bottom: 6px;
-  }
-  .scan-sub {
-    font-size: 12px;
-    color: rgba(255,200,100,0.45);
-    margin-bottom: 20px;
-  }
-
-  .status-list { list-style: none; margin-bottom: 20px; }
   .status-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 0;
-    font-size: 13px;
-    color: rgba(255,200,100,0.4);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    transition: color 0.3s;
+    padding: 12px 0;
+    color: var(--text-glow);
+    text-shadow: var(--text-outline);
+    font-size: 18px; /* تكبير الخط */
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
-  .status-list li.done { color: rgba(255,220,130,0.85); }
-  .sicon {
-    font-size: 14px;
-    min-width: 18px;
-    text-align: center;
+  .status-list li.done { color: #ffd700; font-size: 20px; }
+
+  .step { display: none; }
+  .step.active { display: block; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  @keyframes popIn { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
+
+  .success-text { 
+    color: var(--text-glow); 
+    text-shadow: var(--text-outline); 
+    font-weight: 900; 
+    font-size: 26px; 
+    margin-top: 15px;
   }
 
-  /* النتيجة */
-  .result-wrap { text-align: center; padding: 10px 0; }
-  .result-icon-big {
-    font-size: 64px;
-    margin-bottom: 16px;
-    display: block;
-    animation: bounceIn 0.55s cubic-bezier(0.16,1,0.3,1);
-  }
-  @keyframes bounceIn {
-    0%{transform:scale(0);opacity:0} 60%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1}
-  }
-  .result-title {
-    font-size: 22px;
-    font-weight: 900;
-    margin-bottom: 10px;
-  }
-  .result-title.success { color: #6de07a; text-shadow: 0 0 20px rgba(80,220,100,0.3); }
-  .result-title.danger  { color: #f07070; }
-  .result-desc {
-    font-size: 13px;
-    color: rgba(255,200,100,0.5);
-    line-height: 1.8;
-  }
-
-  /* مؤشر تحميل */
-  .spinner {
-    display: inline-block;
-    width: 16px; height: 16px;
-    border: 2px solid rgba(60,30,0,0.3);
-    border-top-color: rgba(60,30,0,0.8);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 8px;
-  }
-
-  .footer-text {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 11px;
-    color: rgba(255,180,60,0.25);
-    letter-spacing: 0.5px;
-  }
 </style>
 </head>
 <body>
 
-<div class="bg-layer"></div>
-<div class="bg-logo"></div>
-<div class="deco-circle dc1"></div>
-<div class="deco-circle dc2"></div>
+<!-- شعار مائي ثابت في المركز -->
+<div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:60vh; height:60vh; background:url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat; opacity:0.1; z-index:0; pointer-events:none;"></div>
 
-<!-- زخرفة نباتية -->
-<svg class="leaf" style="bottom:-20px;right:-20px;width:200px;height:200px" viewBox="0 0 200 200">
-  <path d="M180,180 Q80,160 20,20 Q100,60 180,180Z" fill="#3a8c20"/>
-  <path d="M180,180 Q140,80 60,10 Q120,80 180,180Z" fill="#2d6e18"/>
-</svg>
-<svg class="leaf" style="top:-20px;left:-20px;width:160px;height:160px;transform:rotate(180deg)" viewBox="0 0 200 200">
-  <path d="M180,180 Q80,160 20,20 Q100,60 180,180Z" fill="#3a8c20"/>
-</svg>
+<div class="container" id="mainContainer">
+  <div class="gold-border-wrap">
+    <div class="card">
+      
+      <div class="header">
+        <img src="https://i.imgur.com/OpgYmlS.jpeg" alt="GREEG Bot"/>
+        <div class="brand-name">GREEG</div>
+        <div class="brand-sub">نظام التحقق المشرق</div>
+      </div>
 
-<div class="container">
-  <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
 
-    <div class="header">
-      <img src="https://i.imgur.com/OpgYmlS.jpeg" alt="GREEG Bot" class="bot-image"/>
-      <div class="brand-name">GREEG</div>
-      <div class="brand-sub">نظام التحقق الأمني</div>
-    </div>
-
-    <div class="progress-wrap">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
-    </div>
-
-    <!-- المرحلة 1: لست روبوت -->
-    <div class="step active" id="step1">
-      <div class="captcha-box" id="captchaBox" onclick="handleCaptcha()">
-        <div class="captcha-left">
-          <div class="checkbox-outer">
-            <svg class="check-svg" width="16" height="16" viewBox="0 0 16 16">
-              <polyline points="3,8 7,12 13,4" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <svg class="spin-svg" width="16" height="16" viewBox="0 0 16 16">
-              <circle cx="8" cy="8" r="6" stroke="rgba(255,165,50,0.3)" stroke-width="2" fill="none"/>
-              <path d="M8 2 A6 6 0 0 1 14 8" stroke="rgba(255,165,50,0.9)" stroke-width="2" fill="none" stroke-linecap="round"/>
-            </svg>
+      <!-- الخطوة 1 -->
+      <div class="step active" id="step1">
+        <div class="captcha-box" id="captchaBox" onclick="handleCaptcha()">
+          <div style="display:flex; align-items:center; gap:15px;">
+            <div class="checkbox-outer" id="checkOuter">
+              <svg class="check-svg" viewBox="0 0 24 24" width="20" height="20">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span class="captcha-label">أنا لست روبوت</span>
           </div>
-          <span class="captcha-label">لست روبوتاً</span>
+          <img src="https://i.imgur.com/Owaf8Cs.png" width="35" alt="logo"/>
         </div>
-        <div class="captcha-logo-wrap">
-          <img src="https://i.imgur.com/Owaf8Cs.png" alt="GREEG" class="captcha-logo"/>
-          <span class="captcha-brand">GREEG</span>
-        </div>
+        <button class="btn-main" id="step1Btn" onclick="proceedToScan()" disabled>تحقق الآن</button>
       </div>
-      <button class="btn-main" id="step1Btn" onclick="proceedFromCaptcha()" disabled>
-        تحقق والدخول للسيرفر
-      </button>
-    </div>
 
-    <!-- المرحلة 2: الفحص -->
-    <div class="step" id="step2">
-      <div class="scan-title">🔍 جارٍ فحص الجهاز</div>
-      <div class="scan-sub">يرجى الانتظار...</div>
-      <ul class="status-list" id="statusList">
-        <li id="s1"><span class="sicon">⏳</span> التحقق من المتصفح</li>
-        <li id="s2"><span class="sicon">⏳</span> تحليل بيانات الجهاز</li>
-        <li id="s3"><span class="sicon">⏳</span> توليد البصمة الرقمية</li>
-        <li id="s4"><span class="sicon">⏳</span> فحص قاعدة البيانات</li>
-        <li id="s5"><span class="sicon">⏳</span> التحقق النهائي</li>
-      </ul>
-    </div>
-
-    <!-- المرحلة 3: النتيجة -->
-    <div class="step" id="step3">
-      <div class="result-wrap">
-        <span class="result-icon-big" id="resultIcon"></span>
-        <div class="result-title" id="resultTitle"></div>
-        <div class="result-desc" id="resultDesc"></div>
+      <!-- الخطوة 2 -->
+      <div class="step" id="step2">
+        <h3 style="margin-bottom:20px; color:#fff; text-shadow: var(--text-outline);">🔍 جارٍ فحص الأمان...</h3>
+        <ul class="status-list" id="statusList">
+          <li id="s1">🌀 تحليل بيانات المتصفح</li>
+          <li id="s2">🌀 التحقق من البصمة الرقمية</li>
+          <li id="s3">🌀 فحص سجلات الحظر</li>
+        </ul>
       </div>
-    </div>
 
+      <!-- الخطوة 3 -->
+      <div class="step" id="step3">
+        <div id="resultArea"></div>
+      </div>
+
+    </div>
   </div>
-  <div class="footer-text">GREEG Security System • مدعوم بالحماية المتقدمة</div>
 </div>
 
 <script>
-const API_URL = "https://verify-sigma-wheat.vercel.app/api/verify";
-
-let collectedData = {};
-let captchaDone = false;
-
-function getToken() {
-  return new URLSearchParams(window.location.search).get("token") || "";
-}
-
-function setProgress(pct) {
-  document.getElementById("progressFill").style.width = pct + "%";
-}
-
-function showStep(n) {
-  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-  document.getElementById("step" + n).classList.add("active");
-}
-
-function setStatus(id, icon, done) {
-  const el = document.getElementById(id);
-  el.querySelector(".sicon").textContent = icon;
-  if (done) el.classList.add("done");
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// ── التعامل مع الكابتشا ──
-async function handleCaptcha() {
-  if (captchaDone) return;
-  const box = document.getElementById("captchaBox");
-  box.classList.add("checking");
-  setProgress(15);
-  await sleep(900 + Math.random() * 600);
-  box.classList.remove("checking");
-  box.classList.add("done");
-  captchaDone = true;
-  setProgress(25);
-  document.getElementById("step1Btn").disabled = false;
-}
-
-async function proceedFromCaptcha() {
-  if (!captchaDone) return;
-  showStep(2);
-  setProgress(30);
-  await runScans();
-}
-
-// ── جمع البصمة ──
-function getCanvasFp() {
-  try {
-    const c = document.createElement("canvas");
-    const ctx = c.getContext("2d");
-    ctx.textBaseline = "top";
-    ctx.font = "14px Arial";
-    ctx.fillStyle = "#f60";
-    ctx.fillRect(125, 1, 62, 20);
-    ctx.fillStyle = "#069";
-    ctx.fillText("GREEG", 2, 15);
-    return c.toDataURL().slice(-50);
-  } catch { return "N/A"; }
-}
-
-function getWebGL() {
-  try {
-    const c = document.createElement("canvas");
-    const gl = c.getContext("webgl") || c.getContext("experimental-webgl");
-    const ext = gl.getExtension("WEBGL_debug_renderer_info");
-    return { vendor: gl.getParameter(ext.UNMASKED_VENDOR_WEBGL), renderer: gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) };
-  } catch { return { vendor: "N/A", renderer: "N/A" }; }
-}
-
-async function getAudioFp() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const analyser = ctx.createAnalyser();
-    const gain = ctx.createGain();
-    gain.gain.value = 0;
-    osc.connect(analyser); analyser.connect(gain); gain.connect(ctx.destination);
-    osc.start(0);
-    const data = new Float32Array(analyser.frequencyBinCount);
-    analyser.getFloatFrequencyData(data);
-    osc.stop(); await ctx.close();
-    return data.slice(0,5).join(",");
-  } catch { return "N/A"; }
-}
-
-function getStorageFp() {
-  const key = "greeg_fp";
-  try {
-    let v = localStorage.getItem(key);
-    if (!v) { v = Date.now().toString(36) + Math.random().toString(36).slice(2); localStorage.setItem(key, v); }
-    return v;
-  } catch { return "N/A"; }
-}
-
-async function collectAll() {
-  const wgl = getWebGL();
-  const audio = await getAudioFp();
-  return {
-    token: getToken(),
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-    platform: navigator.platform,
-    screenW: screen.width, screenH: screen.height,
-    colorDepth: screen.colorDepth,
-    pixelRatio: window.devicePixelRatio,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    timezoneOffset: new Date().getTimezoneOffset(),
-    webglVendor: wgl.vendor, webglRenderer: wgl.renderer,
-    canvasFp: getCanvasFp(),
-    audioFp: audio,
-    storageFp: getStorageFp(),
-    memory: navigator.deviceMemory || "N/A",
-    cores: navigator.hardwareConcurrency || "N/A",
-    touchPoints: navigator.maxTouchPoints,
-    connection: (navigator.connection || {}).effectiveType || "N/A",
-  };
-}
-
-async function hashData(data) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(data)));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("").slice(0,32);
-}
-
-// ── تشغيل مراحل الفحص ──
-async function runScans() {
-  await sleep(500);
-  setStatus("s1","✅",true); setProgress(42);
-
-  collectedData = await collectAll();
-  await sleep(450);
-  setStatus("s2","✅",true); setProgress(58);
-
-  collectedData.fingerprint = await hashData(collectedData);
-  await sleep(550);
-  setStatus("s3","✅",true); setProgress(72);
-
-  await sleep(400);
-  setStatus("s4","✅",true); setProgress(86);
-
-  await sleep(400);
-  setStatus("s5","✅",true); setProgress(100);
-
-  await sleep(400);
-  await submitVerification();
-}
-
-async function submitVerification() {
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(collectedData),
-    });
-    const data = await res.json();
-    showStep(3);
-
-    if (data.success) {
-      document.getElementById("resultIcon").textContent  = "✅";
-      document.getElementById("resultTitle").textContent = "تم التحقق بنجاح!";
-      document.getElementById("resultTitle").className   = "result-title success";
-      document.getElementById("resultDesc").textContent  = "تم قبولك في السيرفر 🎉\nيمكنك إغلاق هذه الصفحة والعودة إلى Discord.";
-      // إغلاق تلقائي بعد 3 ثواني
-      setTimeout(() => { window.close(); }, 3000);
-    } else if (data.banned) {
-      document.getElementById("resultIcon").textContent  = "🚫";
-      document.getElementById("resultTitle").textContent = "تم حظرك من السيرفر";
-      document.getElementById("resultTitle").className   = "result-title danger";
-      document.getElementById("resultDesc").textContent  = "جهازك أو شبكتك محظورة من هذا السيرفر.";
-    } else {
-      document.getElementById("resultIcon").textContent  = "❌";
-      document.getElementById("resultTitle").textContent = "فشل التحقق";
-      document.getElementById("resultTitle").className   = "result-title danger";
-      document.getElementById("resultDesc").textContent  = data.message || "حدث خطأ، حاول مرة أخرى.";
+  // توليد لوغو GREEG كفقاعات متحركة في الخلفية
+  function createLogoBubbles() {
+    const body = document.body;
+    for (let i = 0; i < 12; i++) {
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      // حجم متوسط عشوائي
+      const size = Math.random() * 50 + 40 + 'px';
+      b.style.width = size;
+      b.style.height = size;
+      b.style.left = Math.random() * 100 + '%';
+      b.style.animationDuration = (Math.random() * 5 + 8) + 's';
+      b.style.animationDelay = Math.random() * 5 + 's';
+      body.appendChild(b);
     }
-  } catch (e) {
-    showStep(3);
-    document.getElementById("resultIcon").textContent  = "⚠️";
-    document.getElementById("resultTitle").textContent = "خطأ في الاتصال";
-    document.getElementById("resultTitle").className   = "result-title danger";
-    document.getElementById("resultDesc").textContent  = "تعذر الاتصال بالسيرفر، تحقق من اتصالك بالإنترنت.";
   }
-}
+  createLogoBubbles();
+
+  let captchaDone = false;
+  const API_URL = "https://verify-sigma-wheat.vercel.app/api/verify";
+
+  async function handleCaptcha() {
+    if (captchaDone) return;
+    const check = document.getElementById('checkOuter');
+    check.innerHTML = '<div style="width:10px; height:10px; background:#fff; border-radius:50%; animation: pulse 0.6s infinite;"></div>';
+    
+    await new Promise(r => setTimeout(r, 1500));
+    
+    document.getElementById('captchaBox').classList.add('done');
+    check.innerHTML = '<svg class="check-svg" style="display:block" viewBox="0 0 24 24" width="20" height="20"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    captchaDone = true;
+    document.getElementById('step1Btn').disabled = false;
+    document.getElementById('progressFill').style.width = "30%";
+  }
+
+  async function proceedToScan() {
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+    
+    const steps = ['s1', 's2', 's3'];
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(r => setTimeout(r, 1000));
+      const el = document.getElementById(steps[i]);
+      el.classList.add('done');
+      el.innerHTML = "✅ " + el.innerText.replace('🌀 ', '');
+      document.getElementById('progressFill').style.width = (40 + (i * 20)) + "%";
+    }
+    sendVerification();
+  }
+
+  async function sendVerification() {
+    const payload = {
+      token: new URLSearchParams(window.location.search).get("token") || "GREEG-CLIENT",
+      userAgent: navigator.userAgent,
+      screen: `${screen.width}x${screen.height}`,
+      platform: navigator.platform
+    };
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      showFinalResult(data.success, data.message);
+    } catch (e) {
+      showFinalResult(false, "خطأ في الاتصال بالخادم");
+    }
+  }
+
+  function showFinalResult(success, msg) {
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+    document.getElementById('progressFill').style.width = "100%";
+    
+    const area = document.getElementById('resultArea');
+    if (success) {
+      area.innerHTML = `
+        <div style="font-size:70px;">✅</div>
+        <div class="success-text">تم التحقق بنجاح!</div>
+        <p style="margin-top:15px; color:#fff; text-shadow: var(--text-outline); font-size:18px;">🎉 تم قبولك! يمكنك العودة الآن.</p>
+      `;
+    } else {
+      area.innerHTML = `
+        <div style="font-size:70px;">⚠️</div>
+        <div class="success-text" style="color:#ff4757;">فشل التحقق</div>
+        <p style="margin-top:15px; color:#fff; text-shadow: var(--text-outline); font-size:18px;">${msg || 'حاول مرة أخرى'}</p>
+      `;
+    }
+  }
 </script>
 </body>
 </html>
