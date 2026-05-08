@@ -3,15 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GREEG — التحقق المتقدم</title>
+<title>GREEG — نظام التحقق المتقدم</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --gold-gradient: linear-gradient(90deg, #ffd700, #fff3b0, #ffcc00, #fff3b0, #ffd700);
+    --gold-anim: linear-gradient(90deg, #ffd700, #fff3b0, #ffcc00, #fff3b0, #ffd700);
     --green-3d: linear-gradient(145deg, #2ecc71, #27ae60);
-    /* استايل النص الواضح: أبيض مع إطار أسود وظل */
-    --text-glow: white;
-    --text-outline: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 3px 3px 8px rgba(0,0,0,0.6);
+    /* استايل النص: أبيض، إطار أسود حاد، ظل خلفي */
+    --text-style: white;
+    --text-stroke: 
+        -1.5px -1.5px 0 #000,  
+         1.5px -1.5px 0 #000,
+        -1.5px  1.5px 0 #000,
+         1.5px  1.5px 0 #000,
+         3px 4px 10px rgba(0,0,0,0.7);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,49 +27,52 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow-x: hidden;
     position: relative;
+    /* الخلفية المطلوبة */
     background: url('https://i.imgur.com/NO67yFT.jpeg') center/cover no-repeat fixed;
   }
 
-  /* الفقاعات (اللوغو الصغير المتحرك) */
-  .bubble {
+  /* نظام فقاعات اللوغو المتطايرة */
+  .logo-bubble {
     position: absolute;
     background: url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat;
-    bottom: -150px;
-    animation: floatUp 12s infinite ease-in;
+    bottom: -120px;
     z-index: 1;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
-    opacity: 0.6;
+    opacity: 0;
+    pointer-events: none;
+    animation: floatLogo 10s infinite ease-in;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   }
 
-  @keyframes floatUp {
-    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
-    20% { opacity: 0.7; }
-    80% { opacity: 0.7; }
-    100% { transform: translateY(-120vh) rotate(360deg) scale(1.2); opacity: 0; }
+  @keyframes floatLogo {
+    0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+    20% { opacity: 0.6; }
+    80% { opacity: 0.6; }
+    100% { transform: translateY(-115vh) rotate(360deg) scale(1.3); opacity: 0; }
   }
 
+  /* الحاوية الأساسية - متجاوبة */
   .container {
     position: relative;
     z-index: 10;
-    width: 100%;
-    max-width: 450px;
-    padding: 20px;
+    width: 92%;
+    max-width: 440px;
+    margin: 20px auto;
   }
 
-  /* الإطار الذهبي المتحرك */
-  .gold-border-wrap {
+  /* الإطار الذهبي المتحرك (سلس ولامع) */
+  .gold-frame {
     position: relative;
     padding: 6px; 
     border-radius: 35px;
-    background: linear-gradient(90deg, #ffd700, #ffffff, #ffd700, #ffffff);
-    background-size: 300% 300%;
-    animation: goldFlow 3s linear infinite;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    background: linear-gradient(90deg, #ffd700, #fff, #ffd700, #fff, #ffd700);
+    background-size: 400% 400%;
+    animation: goldMove 4s linear infinite;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
   }
 
-  @keyframes goldFlow {
+  @keyframes goldMove {
     0% { background-position: 0% 50%; }
     100% { background-position: 100% 50%; }
   }
@@ -73,56 +81,59 @@
   .card {
     background: var(--green-3d);
     border-radius: 30px;
-    padding: 40px 30px;
+    padding: 40px 25px;
     text-align: center;
     position: relative;
-    box-shadow: inset 0 6px 20px rgba(255,255,255,0.4), inset 0 -6px 15px rgba(0,0,0,0.3);
-    border: 1.5px solid rgba(255,255,255,0.2);
+    box-shadow: 
+        inset 0 8px 20px rgba(255,255,255,0.4), 
+        inset 0 -8px 15px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
   }
 
-  .header img {
-    width: 110px;
-    height: 110px;
-    border-radius: 25px;
+  .bot-pfp {
+    width: 100px;
+    height: 100px;
+    border-radius: 22px;
     border: 4px solid #fff;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    margin-bottom: 15px;
   }
 
-  /* تنسيق النصوص داخل اللوحة */
-  .brand-name {
-    font-size: 32px; /* تكبير الخط */
+  /* تنسيق النصوص الأبيض مع الإطار الأسود */
+  .title {
+    font-size: 32px;
     font-weight: 900;
-    color: var(--text-glow);
-    text-shadow: var(--text-outline);
-    margin-bottom: 8px;
+    color: var(--text-style);
+    text-shadow: var(--text-stroke);
+    margin-bottom: 5px;
   }
 
-  .brand-sub {
-    font-size: 16px; /* تكبير الخط */
+  .subtitle {
+    font-size: 17px;
     font-weight: 700;
-    color: var(--text-glow);
-    text-shadow: var(--text-outline);
-    margin-bottom: 30px;
-    opacity: 0.9;
+    color: var(--text-style);
+    text-shadow: var(--text-stroke);
+    margin-bottom: 25px;
   }
 
-  .progress-wrap {
+  /* شريط التقدم */
+  .progress-container {
     background: rgba(0,0,0,0.3);
     height: 12px;
     border-radius: 10px;
     margin-bottom: 30px;
-    box-shadow: inset 0 3px 6px rgba(0,0,0,0.4);
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
   }
-  .progress-fill {
-    height: 100%;
+  .progress-bar {
     width: 0%;
-    background: linear-gradient(90deg, #f1c40f, #f39c12);
-    border-radius: 10px;
-    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 100%;
+    background: linear-gradient(90deg, #f1c40f, #e67e22);
     box-shadow: 0 0 15px rgba(241, 196, 15, 0.8);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* صندوق الكابتشا */
   .captcha-box {
     background: rgba(255, 255, 255, 0.2);
     border: 3px solid rgba(255, 255, 255, 0.4);
@@ -133,19 +144,19 @@
     justify-content: space-between;
     cursor: pointer;
     margin-bottom: 25px;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(8px);
+    transition: transform 0.2s, background 0.3s;
+    backdrop-filter: blur(5px);
   }
-  .captcha-box:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.02); }
+  .captcha-box:hover { transform: scale(1.02); background: rgba(255, 255, 255, 0.25); }
 
-  .captcha-label {
-    font-size: 20px; /* تكبير الخط */
+  .captcha-text {
+    font-size: 20px;
     font-weight: 900;
-    color: var(--text-glow);
-    text-shadow: var(--text-outline);
+    color: var(--text-style);
+    text-shadow: var(--text-stroke);
   }
 
-  .checkbox-outer {
+  .checkbox {
     width: 32px;
     height: 32px;
     border: 3px solid white;
@@ -154,100 +165,104 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: 0.3s;
   }
+  .captcha-box.verified .checkbox { background: #ffd700; border-color: #ffd700; }
+  .check-icon { display: none; stroke: #27ae60; stroke-width: 5; fill: none; }
+  .captcha-box.verified .check-icon { display: block; }
 
-  .captcha-box.done .checkbox-outer { background: #ffd700; border-color: #ffd700; }
-  .check-svg { display: none; stroke: #27ae60; stroke-width: 5; fill: none; }
-  .captcha-box.done .check-svg { display: block; }
-
-  .btn-main {
+  /* الزر الرئيسي */
+  .main-btn {
     width: 100%;
     padding: 18px;
     border: none;
     border-radius: 15px;
     background: #ffd700;
     color: #27ae60;
-    font-size: 22px; /* تكبير الخط */
+    font-size: 22px;
     font-weight: 900;
     cursor: pointer;
     box-shadow: 0 8px 0 #b7950b;
     transition: 0.2s;
+    text-transform: uppercase;
   }
-  .btn-main:active { transform: translateY(5px); box-shadow: 0 3px 0 #b7950b; }
-  .btn-main:disabled { filter: grayscale(1); opacity: 0.6; cursor: not-allowed; }
+  .main-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #b7950b; }
+  .main-btn:disabled { opacity: 0.6; cursor: not-allowed; filter: grayscale(0.5); }
 
-  .status-list li {
-    padding: 12px 0;
-    color: var(--text-glow);
-    text-shadow: var(--text-outline);
-    font-size: 18px; /* تكبير الخط */
+  /* الحالات والقوائم */
+  .status-item {
+    color: var(--text-style);
+    text-shadow: var(--text-stroke);
+    font-size: 19px;
     font-weight: 700;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
-  .status-list li.done { color: #ffd700; font-size: 20px; }
+  .status-item.done { color: #ffd700; }
 
   .step { display: none; }
-  .step.active { display: block; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-  @keyframes popIn { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
+  .step.active { display: block; animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-  .success-text { 
-    color: var(--text-glow); 
-    text-shadow: var(--text-outline); 
-    font-weight: 900; 
-    font-size: 26px; 
-    margin-top: 15px;
+  /* استجابة الشاشات الصغيرة */
+  @media (max-width: 480px) {
+    .container { width: 95%; }
+    .card { padding: 30px 15px; }
+    .title { font-size: 26px; }
+    .main-btn { font-size: 19px; padding: 15px; }
+    .captcha-text { font-size: 18px; }
   }
-
 </style>
 </head>
 <body>
 
-<!-- شعار مائي ثابت في المركز -->
-<div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:60vh; height:60vh; background:url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat; opacity:0.1; z-index:0; pointer-events:none;"></div>
+<!-- شعار مائي كبير خلف الكرت -->
+<div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:65vh; height:65vh; background:url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat; opacity:0.08; z-index:0; pointer-events:none;"></div>
 
-<div class="container" id="mainContainer">
-  <div class="gold-border-wrap">
+<div class="container">
+  <div class="gold-frame">
     <div class="card">
       
       <div class="header">
-        <img src="https://i.imgur.com/OpgYmlS.jpeg" alt="GREEG Bot"/>
-        <div class="brand-name">GREEG</div>
-        <div class="brand-sub">نظام التحقق المتقدم</div>
+        <img src="https://i.imgur.com/OpgYmlS.jpeg" class="bot-pfp" alt="GREEG"/>
+        <h1 class="title">GREEG</h1>
+        <p class="subtitle">نظام التحقق المتقدم</p>
       </div>
 
-      <div class="progress-wrap">
-        <div class="progress-fill" id="progressFill"></div>
+      <div class="progress-container">
+        <div class="progress-bar" id="pBar"></div>
       </div>
 
-      <!-- الخطوة 1 -->
-      <div class="step active" id="step1">
-        <div class="captcha-box" id="captchaBox" onclick="handleCaptcha()">
-          <div style="display:flex; align-items:center; gap:15px;">
-            <div class="checkbox-outer" id="checkOuter">
-              <svg class="check-svg" viewBox="0 0 24 24" width="20" height="20">
+      <!-- مرحلة 1 -->
+      <div class="step active" id="st1">
+        <div class="captcha-box" id="cBox" onclick="runCaptcha()">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="checkbox" id="cMark">
+              <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <span class="captcha-label">أنا لست روبوت</span>
+            <span class="captcha-text">أنا لست روبوت</span>
           </div>
           <img src="https://i.imgur.com/Owaf8Cs.png" width="35" alt="logo"/>
         </div>
-        <button class="btn-main" id="step1Btn" onclick="proceedToScan()" disabled>تحقق الآن</button>
+        <button class="main-btn" id="st1Btn" onclick="goToScan()" disabled>تحقق الآن</button>
       </div>
 
-      <!-- الخطوة 2 -->
-      <div class="step" id="step2">
-        <h3 style="margin-bottom:20px; color:#fff; text-shadow: var(--text-outline);">🔍 جارٍ فحص الأمان...</h3>
-        <ul class="status-list" id="statusList">
-          <li id="s1">🌀 تحليل بيانات المتصفح</li>
-          <li id="s2">🌀 التحقق من البصمة الرقمية</li>
-          <li id="s3">🌀 فحص سجلات الحظر</li>
-        </ul>
+      <!-- مرحلة 2 -->
+      <div class="step" id="st2">
+        <h3 class="subtitle">🔍 فحص الأمان جارٍ...</h3>
+        <div class="status-item" id="s1">🌀 تحليل المتصفح</div>
+        <div class="status-item" id="s2">🌀 توليد البصمة الرقمية</div>
+        <div class="status-item" id="s3">🌀 فحص قاعدة البيانات</div>
       </div>
 
-      <!-- الخطوة 3 -->
-      <div class="step" id="step3">
-        <div id="resultArea"></div>
+      <!-- مرحلة 3 -->
+      <div class="step" id="st3">
+        <div id="finalRes"></div>
       </div>
 
     </div>
@@ -255,97 +270,99 @@
 </div>
 
 <script>
-  // توليد لوغو GREEG كفقاعات متحركة في الخلفية
-  function createLogoBubbles() {
+  // توليد فقاعات لوغو GREEG في الخلفية
+  function spawnBubbles() {
     const body = document.body;
-    for (let i = 0; i < 12; i++) {
+    for(let i=0; i<10; i++) {
       const b = document.createElement('div');
-      b.className = 'bubble';
-      // حجم متوسط عشوائي
+      b.className = 'logo-bubble';
       const size = Math.random() * 50 + 40 + 'px';
       b.style.width = size;
       b.style.height = size;
       b.style.left = Math.random() * 100 + '%';
-      b.style.animationDuration = (Math.random() * 5 + 8) + 's';
+      b.style.animationDuration = (Math.random() * 5 + 7) + 's';
       b.style.animationDelay = Math.random() * 5 + 's';
       body.appendChild(b);
     }
   }
-  createLogoBubbles();
+  spawnBubbles();
 
-  let captchaDone = false;
+  let verified = false;
   const API_URL = "https://verify-sigma-wheat.vercel.app/api/verify";
 
-  async function handleCaptcha() {
-    if (captchaDone) return;
-    const check = document.getElementById('checkOuter');
-    check.innerHTML = '<div style="width:10px; height:10px; background:#fff; border-radius:50%; animation: pulse 0.6s infinite;"></div>';
+  async function runCaptcha() {
+    if (verified) return;
+    const mark = document.getElementById('cMark');
+    mark.innerHTML = '<div style="width:8px; height:8px; background:white; border-radius:50%; animation: pulse 0.5s infinite alternate;"></div>';
     
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 1400));
     
-    document.getElementById('captchaBox').classList.add('done');
-    check.innerHTML = '<svg class="check-svg" style="display:block" viewBox="0 0 24 24" width="20" height="20"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-    captchaDone = true;
-    document.getElementById('step1Btn').disabled = false;
-    document.getElementById('progressFill').style.width = "30%";
+    document.getElementById('cBox').classList.add('verified');
+    mark.innerHTML = '<svg class="check-icon" style="display:block" viewBox="0 0 24 24" width="18" height="18"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    verified = true;
+    document.getElementById('st1Btn').disabled = false;
+    document.getElementById('pBar').style.width = "30%";
   }
 
-  async function proceedToScan() {
-    document.getElementById('step1').classList.remove('active');
-    document.getElementById('step2').classList.add('active');
+  async function goToScan() {
+    document.getElementById('st1').classList.remove('active');
+    document.getElementById('st2').classList.add('active');
     
-    const steps = ['s1', 's2', 's3'];
-    for (let i = 0; i < steps.length; i++) {
-      await new Promise(r => setTimeout(r, 1000));
-      const el = document.getElementById(steps[i]);
+    const items = ['s1', 's2', 's3'];
+    for (let i = 0; i < items.length; i++) {
+      await new Promise(r => setTimeout(r, 900));
+      const el = document.getElementById(items[i]);
       el.classList.add('done');
       el.innerHTML = "✅ " + el.innerText.replace('🌀 ', '');
-      document.getElementById('progressFill').style.width = (40 + (i * 20)) + "%";
+      document.getElementById('pBar').style.width = (40 + (i * 20)) + "%";
     }
-    sendVerification();
+    finishVerify();
   }
 
-  async function sendVerification() {
+  async function finishVerify() {
     const payload = {
-      token: new URLSearchParams(window.location.search).get("token") || "GREEG-CLIENT",
+      token: new URLSearchParams(window.location.search).get("token") || "ADVANCED_GREEG",
       userAgent: navigator.userAgent,
-      screen: `${screen.width}x${screen.height}`,
-      platform: navigator.platform
+      screen: `${window.screen.width}x${window.screen.height}`
     };
 
     try {
-      const res = await fetch(API_URL, {
+      const r = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
-      showFinalResult(data.success, data.message);
+      const data = await r.json();
+      renderResult(data.success, data.message);
     } catch (e) {
-      showFinalResult(false, "خطأ في الاتصال بالخادم");
+      renderResult(false, "حدث خطأ في الاتصال");
     }
   }
 
-  function showFinalResult(success, msg) {
-    document.getElementById('step2').classList.remove('active');
-    document.getElementById('step3').classList.add('active');
-    document.getElementById('progressFill').style.width = "100%";
+  function renderResult(ok, msg) {
+    document.getElementById('st2').classList.remove('active');
+    document.getElementById('st3').classList.add('active');
+    document.getElementById('pBar').style.width = "100%";
     
-    const area = document.getElementById('resultArea');
-    if (success) {
-      area.innerHTML = `
-        <div style="font-size:70px;">✅</div>
-        <div class="success-text">تم التحقق بنجاح!</div>
-        <p style="margin-top:15px; color:#fff; text-shadow: var(--text-outline); font-size:18px;">🎉 تم قبولك! يمكنك العودة الآن.</p>
+    const res = document.getElementById('finalRes');
+    if (ok) {
+      res.innerHTML = `
+        <div style="font-size:75px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">✅</div>
+        <h2 class="title">تم التحقق!</h2>
+        <p class="subtitle" style="font-size:16px;">تم فحص بياناتك بنجاح. يمكنك العودة الآن.</p>
       `;
     } else {
-      area.innerHTML = `
-        <div style="font-size:70px;">⚠️</div>
-        <div class="success-text" style="color:#ff4757;">فشل التحقق</div>
-        <p style="margin-top:15px; color:#fff; text-shadow: var(--text-outline); font-size:18px;">${msg || 'حاول مرة أخرى'}</p>
+      res.innerHTML = `
+        <div style="font-size:75px;">⚠️</div>
+        <h2 class="title" style="color:#ff4757;">فشل التحقق</h2>
+        <p class="subtitle" style="font-size:16px;">${msg || 'يرجى المحاولة مجدداً'}</p>
       `;
     }
   }
 </script>
+
+<style>
+  @keyframes pulse { to { transform: scale(1.5); opacity: 0.5; } }
+</style>
 </body>
 </html>
