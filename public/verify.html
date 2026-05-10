@@ -29,8 +29,18 @@
     justify-content: center;
     overflow-x: hidden;
     position: relative;
-    /* الخلفية المطلوبة */
-    background: url('https://i.imgur.com/NO67yFT.jpeg') center/cover no-repeat fixed;
+    background: #1a1a1a;
+  }
+
+  /* الخلفية عبر pseudo-element — يمنع الرعشة على iOS وAndroid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('https://i.imgur.com/NO67yFT.jpeg') center/cover no-repeat;
+    z-index: 0;
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   /* نظام فقاعات اللوغو المتطايرة */
@@ -56,6 +66,7 @@
   .container {
     position: relative;
     z-index: 10;
+    isolation: isolate;
     width: 92%;
     max-width: 440px;
     margin: 20px auto;
@@ -118,19 +129,27 @@
 
   /* شريط التقدم */
   .progress-container {
-    background: rgba(0,0,0,0.3);
-    height: 12px;
-    border-radius: 10px;
+    background: rgba(0,0,0,0.45);
+    height: 18px;
+    border-radius: 12px;
     margin-bottom: 30px;
     overflow: hidden;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.2);
   }
   .progress-bar {
     width: 0%;
     height: 100%;
-    background: linear-gradient(90deg, #f1c40f, #e67e22);
-    box-shadow: 0 0 15px rgba(241, 196, 15, 0.8);
+    background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700);
+    background-size: 200% 100%;
+    animation: barShimmer 1.5s linear infinite;
+    box-shadow: 0 0 18px rgba(255, 200, 0, 0.9), inset 0 2px 4px rgba(255,255,255,0.4);
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+  }
+  @keyframes barShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 
   /* صندوق الكابتشا */
