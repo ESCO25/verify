@@ -3,20 +3,19 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GREEG — نظام التحقق المتقدم</title>
+<title>GREEG — التحقق</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet"/>
 <style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
   :root {
-    --gold-anim: linear-gradient(90deg, #ffd700, #fff3b0, #ffcc00, #fff3b0, #ffd700);
-    --green-3d: linear-gradient(145deg, #2ecc71, #27ae60);
-    /* استايل النص: أبيض، إطار أسود حاد، ظل خلفي */
-    --text-style: white;
-    --text-stroke: 
-        -1.5px -1.5px 0 #000,  
-         1.5px -1.5px 0 #000,
-        -1.5px  1.5px 0 #000,
-         1.5px  1.5px 0 #000,
-         3px 4px 10px rgba(0,0,0,0.7);
+    --gold: #ffd700;
+    --gold-dark: #b7950b;
+    --green: #1db954;
+    --green-dark: #158a3e;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.55);
+    --transition: 0.75s cubic-bezier(0.68, -0.35, 0.27, 1.35);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,9 +29,10 @@
     overflow-x: hidden;
     position: relative;
     background: #1a1a1a;
+    perspective: 1000px;
   }
 
-  /* الخلفية عبر pseudo-element — يمنع الرعشة على iOS وAndroid */
+  /* الخلفية الأصلية */
   body::before {
     content: '';
     position: fixed;
@@ -43,7 +43,7 @@
     will-change: transform;
   }
 
-  /* نظام فقاعات اللوغو المتطايرة */
+  /* فقاعات اللوغو الأصلية */
   .logo-bubble {
     position: absolute;
     background: url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat;
@@ -62,7 +62,21 @@
     100% { transform: translateY(-115vh) rotate(360deg) scale(1.3); opacity: 0; }
   }
 
-  /* الحاوية الأساسية - متجاوبة */
+  /* الشعار المائي خلف الكرت */
+  .watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 65vh;
+    height: 65vh;
+    background: url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat;
+    opacity: 0.08;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* الكرت */
   .container {
     position: relative;
     z-index: 10;
@@ -72,10 +86,9 @@
     margin: 20px auto;
   }
 
-  /* الإطار الذهبي المتحرك (سلس ولامع) */
   .gold-frame {
     position: relative;
-    padding: 6px; 
+    padding: 6px;
     border-radius: 35px;
     background: linear-gradient(90deg, #ffd700, #fff, #ffd700, #fff, #ffd700);
     background-size: 400% 400%;
@@ -88,16 +101,15 @@
     100% { background-position: 100% 50%; }
   }
 
-  /* اللوحة الخضراء 3D */
   .card {
-    background: var(--green-3d);
+    background: linear-gradient(145deg, #2ecc71, #27ae60);
     border-radius: 30px;
     padding: 40px 25px;
     text-align: center;
     position: relative;
-    box-shadow: 
-        inset 0 8px 20px rgba(255,255,255,0.4), 
-        inset 0 -8px 15px rgba(0,0,0,0.3);
+    box-shadow:
+      inset 0 8px 20px rgba(255,255,255,0.4),
+      inset 0 -8px 15px rgba(0,0,0,0.3);
     border: 1px solid rgba(255,255,255,0.2);
   }
 
@@ -110,20 +122,19 @@
     margin-bottom: 15px;
   }
 
-  /* تنسيق النصوص الأبيض مع الإطار الأسود */
   .title {
     font-size: 32px;
     font-weight: 900;
-    color: var(--text-style);
-    text-shadow: var(--text-stroke);
+    color: white;
+    text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 3px 4px 10px rgba(0,0,0,0.7);
     margin-bottom: 5px;
   }
 
   .subtitle {
     font-size: 17px;
     font-weight: 700;
-    color: var(--text-style);
-    text-shadow: var(--text-stroke);
+    color: white;
+    text-shadow: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 3px 4px 10px rgba(0,0,0,0.7);
     margin-bottom: 25px;
   }
 
@@ -143,8 +154,8 @@
     background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700);
     background-size: 200% 100%;
     animation: barShimmer 1.5s linear infinite;
-    box-shadow: 0 0 18px rgba(255, 200, 0, 0.9), inset 0 2px 4px rgba(255,255,255,0.4);
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 18px rgba(255,200,0,0.9), inset 0 2px 4px rgba(255,255,255,0.4);
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
     border-radius: 12px;
   }
   @keyframes barShimmer {
@@ -152,136 +163,497 @@
     100% { background-position: -200% 0; }
   }
 
-  /* صندوق الكابتشا */
-  .captcha-box {
-    background: rgba(255, 255, 255, 0.2);
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    border-radius: 20px;
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    margin-bottom: 25px;
-    transition: transform 0.2s, background 0.3s;
-    backdrop-filter: blur(5px);
-  }
-  .captcha-box:hover { transform: scale(1.02); background: rgba(255, 255, 255, 0.25); }
-
-  .captcha-text {
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--text-style);
-    text-shadow: var(--text-stroke);
-  }
-
-  .checkbox {
-    width: 32px;
-    height: 32px;
-    border: 3px solid white;
-    border-radius: 8px;
-    background: rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-  }
-  .captcha-box.verified .checkbox { background: #ffd700; border-color: #ffd700; }
-  .check-icon { display: none; stroke: #27ae60; stroke-width: 5; fill: none; }
-  .captcha-box.verified .check-icon { display: block; }
-
-  /* الزر الرئيسي */
-  .main-btn {
-    width: 100%;
-    padding: 18px;
-    border: none;
-    border-radius: 15px;
-    background: #ffd700;
-    color: #27ae60;
-    font-size: 22px;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 8px 0 #b7950b;
-    transition: 0.2s;
-    text-transform: uppercase;
-  }
-  .main-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #b7950b; }
-  .main-btn:disabled { opacity: 0.6; cursor: not-allowed; filter: grayscale(0.5); }
-
-  /* الحالات والقوائم */
-  .status-item {
-    color: var(--text-style);
-    text-shadow: var(--text-stroke);
-    font-size: 19px;
-    font-weight: 700;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .status-item.done { color: #ffd700; }
-
+  /* Steps */
   .step { display: none; }
   .step.active { display: block; animation: fadeIn 0.4s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-  /* استجابة الشاشات الصغيرة */
+  /* Scan items */
+  .scan-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+    text-align: right;
+  }
+  .scan-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.4s;
+  }
+  .scan-item.visible { opacity: 1; transform: translateX(0); }
+  .scan-item.done {
+    color: #fff;
+    border-color: rgba(255,215,0,0.3);
+    background: rgba(0,0,0,0.3);
+  }
+  .scan-spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #ffd700;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* =============================================
+     زر السويتش — أسهم 3D احترافية
+     ============================================= */
+
+  .confirm-label {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+
+  .toggle-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+
+  .toggle-hint {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  }
+
+  /* الـ track الخاص بالسويتش */
+  .sw-track {
+    position: relative;
+    width: 200px;
+    height: 90px;
+    border-radius: 60px;
+    background: linear-gradient(135deg, #b8d9f8, #e8f4ff);
+    box-shadow:
+      8px 8px 24px rgba(0,0,0,0.4),
+      -4px -4px 16px rgba(255,255,255,0.15),
+      inset 4px 4px 12px rgba(0,0,0,0.2),
+      inset -4px -4px 12px rgba(255,255,255,0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: background var(--transition), box-shadow var(--transition);
+    border: 3px solid rgba(255,255,255,0.35);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .sw-track.human {
+    background: linear-gradient(135deg, #0a2015, #1a4030);
+    box-shadow:
+      8px 8px 28px rgba(0,0,0,0.8),
+      -2px -2px 10px rgba(46,204,113,0.15),
+      inset 4px 4px 14px rgba(0,0,0,0.5),
+      inset -2px -2px 8px rgba(46,204,113,0.1);
+    border-color: rgba(46,204,113,0.5);
+  }
+
+  /* Sky inside track */
+  .sw-sky {
+    position: absolute;
+    inset: 0;
+    border-radius: 56px;
+    overflow: hidden;
+  }
+  .sw-sky::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #c8e6d0 0%, #a8d8b8 60%, #d0edd8 100%);
+    opacity: 1;
+    transition: opacity 0.8s ease;
+  }
+  .sw-track.human .sw-sky::before { opacity: 0; }
+  .sw-sky::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #0a2518 0%, #0d3520 60%, #1a5030 100%);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .sw-track.human .sw-sky::after { opacity: 1; }
+
+  /* Clouds in track */
+  .sw-clouds {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 60%;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    z-index: 2;
+  }
+  .sw-track.human .sw-clouds { opacity: 0; transform: translateY(10px); }
+  .sw-cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(150,200,160,0.6);
+  }
+  .swc1 { width: 72px; height: 34px; bottom: 6px; left: 20px; opacity: 0.9; }
+  .swc1::before {
+    content: '';
+    position: absolute;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(150,200,160,0.6);
+    top: -20px; left: 9px;
+  }
+  .swc1::after {
+    content: '';
+    position: absolute;
+    width: 33px; height: 33px;
+    border-radius: 50%;
+    background: rgba(150,200,160,0.6);
+    top: -12px; left: 32px;
+  }
+  .swc2 { width: 50px; height: 24px; bottom: 20px; right: 16px; opacity: 0.65; }
+  .swc2::before {
+    content: '';
+    position: absolute;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(150,200,160,0.6);
+    top: -13px; left: 7px;
+  }
+
+  /* Green sparkles inside track when human */
+  .sw-stars {
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease 0.3s;
+    z-index: 2;
+  }
+  .sw-track.human .sw-stars { opacity: 1; }
+  .sw-ts {
+    position: absolute;
+    border-radius: 50%;
+    background: #4eff91;
+  }
+  @keyframes ts-twinkle {
+    0%,100% { transform: scale(0.5); opacity: 0.15; }
+    50%     { transform: scale(1.8); opacity: 1; }
+  }
+  @keyframes ts-flash {
+    0%,100% { opacity:0.2; transform:scale(0.7); }
+    50%     { opacity:1; transform:scale(1.5); }
+  }
+  .sw-ts:nth-child(1)  { width:3px;height:3px;top:18%;left:10%; animation:ts-twinkle 2.1s infinite 0s; }
+  .sw-ts:nth-child(2)  { width:2px;height:2px;top:32%;left:25%; animation:ts-flash 1.8s infinite 0.4s; }
+  .sw-ts:nth-child(3)  { width:3px;height:3px;top:14%;left:42%; animation:ts-twinkle 2.6s infinite 0.9s; }
+  .sw-ts:nth-child(4)  { width:2px;height:2px;top:50%;left:16%; animation:ts-flash 1.6s infinite 1.2s; }
+  .sw-ts:nth-child(5)  { width:3px;height:3px;top:22%;left:58%; animation:ts-twinkle 2.3s infinite 0.2s; }
+  .sw-ts:nth-child(6)  { width:2px;height:2px;top:60%;left:30%; animation:ts-flash 1.9s infinite 0.7s; }
+  .sw-ts:nth-child(7)  { width:3px;height:3px;top:12%;left:72%; animation:ts-twinkle 2.8s infinite 0.3s; }
+  .sw-ts:nth-child(8)  { width:2px;height:2px;top:40%;left:48%; animation:ts-flash 2.0s infinite 1.5s; }
+  .sw-ts:nth-child(9)  { width:3px;height:3px;top:68%;left:62%; animation:ts-twinkle 2.4s infinite 0.1s; }
+  .sw-ts:nth-child(10) { width:2px;height:2px;top:28%;left:82%; animation:ts-flash 1.7s infinite 0.8s; }
+
+  /* خطوط متحركة كبيرة داخل المسار - اتجاه معاكس */
+  .sw-moving-lines {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 15px;
+    z-index: 3;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+  .sw-track.human .sw-moving-lines { opacity: 0; }
+
+  .line-arrow {
+    font-size: 36px;
+    font-weight: bold;
+    color: #d9a5a5;
+    animation: lineFlow 1.5s ease-in-out infinite;
+  }
+  .line-arrow:nth-child(1) { animation-delay: 0s; }
+  .line-arrow:nth-child(2) { animation-delay: 0.3s; }
+  .line-arrow:nth-child(3) { animation-delay: 0.6s; }
+
+  @keyframes lineFlow {
+    0% { transform: translateX(0) scaleX(0.8); opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { transform: translateX(30px) scaleX(1); opacity: 0; }
+  }
+
+  /* Knob */
+  .sw-knob {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    transition: transform var(--transition), scale 0.2s ease, box-shadow 0.2s ease;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  .sw-knob:active {
+    scale: 0.92;
+    filter: brightness(1.1);
+  }
+  .sw-track.human .sw-knob { transform: translateX(108px); }
+
+  /* Knob base circle */
+  .sw-knob-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #4eff91, #1db954);
+    box-shadow:
+      0 0 0 3px rgba(29,185,84,0.5),
+      0 0 28px rgba(46,204,113,0.7),
+      inset -4px -4px 12px rgba(20,100,50,0.3),
+      inset 4px 4px 10px rgba(180,255,200,0.4);
+    transition: background 0.6s ease, box-shadow 0.6s ease, transform 0.2s ease;
+  }
+  .sw-knob:hover .sw-knob-bg {
+    box-shadow:
+      0 0 0 4px rgba(29,185,84,0.6),
+      0 0 35px rgba(46,204,113,0.8),
+      inset -4px -4px 12px rgba(20,100,50,0.3),
+      inset 4px 4px 10px rgba(180,255,200,0.4);
+  }
+  .sw-track.human .sw-knob-bg {
+    background: radial-gradient(circle at 35% 30%, #4eff91, #1db954);
+    box-shadow:
+      0 0 0 3px rgba(29,185,84,0.5),
+      0 0 40px rgba(46,204,113,0.8),
+      0 0 60px rgba(46,204,113,0.4),
+      inset -4px -4px 12px rgba(20,100,50,0.4),
+      inset 4px 4px 10px rgba(180,255,200,0.45);
+  }
+
+  /* Red arrow icon - سهم أحمر 3D */
+  .sw-red-arrow {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.35s ease;
+    z-index: 2;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.4)) drop-shadow(-1px -1px 2px rgba(255,255,255,0.3));
+  }
+  .sw-track.human .sw-red-arrow { opacity: 0; }
+
+  /* Check icon */
+  .sw-check {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s ease 0.2s;
+    z-index: 2;
+  }
+  .sw-track.human .sw-check { opacity: 1; }
+
+  /* Green pulse ring when human */
+  .sw-knob-ring {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 2px solid rgba(46,204,113,0);
+    transition: border-color 0.4s, box-shadow 0.4s;
+  }
+  .sw-track.human .sw-knob-ring {
+    border-color: rgba(46,204,113,0.5);
+    box-shadow: 0 0 14px rgba(46,204,113,0.4);
+    animation: ringPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes ringPulse {
+    0%,100% { box-shadow: 0 0 8px rgba(46,204,113,0.3); }
+    50%      { box-shadow: 0 0 22px rgba(46,204,113,0.7); }
+  }
+
+  /* حالة الإنجاز */
+  .sw-done-check {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: 20;
+    background: rgba(29,185,84,0.15);
+    border-radius: 56px;
+  }
+  .sw-track.verified .sw-done-check { opacity: 1; }
+  .sw-track.verified .sw-knob { opacity: 0; transition: opacity 0.3s; }
+
+  /* Result */
+  .result-icon { font-size: 65px; margin-bottom: 12px; display: block; animation: iconPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes iconPop { from { transform:scale(0.5);opacity:0; } to { transform:scale(1);opacity:1; } }
+  .result-title { font-size: 22px; font-weight: 900; color: white; text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000; margin-bottom: 8px; }
+  .result-sub { font-size: 14px; color: rgba(255,255,255,0.85); text-shadow: 1px 1px 3px rgba(0,0,0,0.5); line-height: 1.7; margin-bottom: 16px; }
+
+  .redirect-track { background: rgba(0,0,0,0.3); height: 4px; border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+  .redirect-fill { height: 100%; background: #ffd700; border-radius: 4px; width: 0%; box-shadow: 0 0 8px #ffd700; }
+  .redirect-text { font-size: 12px; color: rgba(255,255,255,0.6); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+
+  .open-discord-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 20px;
+    background: #5865F2;
+    color: white;
+    border-radius: 10px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(88,101,242,0.5);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .open-discord-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
   @media (max-width: 480px) {
     .container { width: 95%; }
     .card { padding: 30px 15px; }
     .title { font-size: 26px; }
-    .main-btn { font-size: 19px; padding: 15px; }
-    .captcha-text { font-size: 18px; }
+    .sw-track { width: 170px; height: 76px; }
+    .sw-knob { width: 62px; height: 62px; top: 6px; left: 6px; }
+    .sw-track.human .sw-knob { transform: translateX(90px); }
   }
 </style>
 </head>
 <body>
 
-<!-- شعار مائي كبير خلف الكرت -->
-<div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:65vh; height:65vh; background:url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat; opacity:0.08; z-index:0; pointer-events:none;"></div>
+<div class="watermark"></div>
 
 <div class="container">
   <div class="gold-frame">
     <div class="card">
-      
-      <div class="header">
-        <img src="https://i.imgur.com/OpgYmlS.jpeg" class="bot-pfp" alt="GREEG"/>
-        <h1 class="title">GREEG</h1>
-        <p class="subtitle">نظام التحقق المتقدم</p>
-      </div>
+
+      <img src="https://i.imgur.com/OpgYmlS.jpeg" class="bot-pfp" alt="GREEG"/>
+      <h1 class="title">GREEG</h1>
+      <p class="subtitle">نظام التحقق المتقدم</p>
 
       <div class="progress-container">
         <div class="progress-bar" id="pBar"></div>
       </div>
 
-      <!-- مرحلة 1 -->
+      <!-- Step 1: Auto scan -->
       <div class="step active" id="st1">
-        <div class="captcha-box" id="cBox" onclick="runCaptcha()">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div class="checkbox" id="cMark">
-              <svg class="check-icon" viewBox="0 0 24 24" width="18" height="18">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </div>
-            <span class="captcha-text">أنا لست روبوت</span>
-          </div>
-          <img src="https://i.imgur.com/Owaf8Cs.png" width="35" alt="logo"/>
+        <div class="scan-lines" id="scanList">
+          <div class="scan-item" id="sc1"><span>🌐</span><span>فحص بيانات المتصفح</span></div>
+          <div class="scan-item" id="sc2"><span>🔐</span><span>توليد البصمة الرقمية</span></div>
+          <div class="scan-item" id="sc3"><span>🛡️</span><span>فحص قاعدة البيانات</span></div>
+          <div class="scan-item" id="sc4"><span>✅</span><span>التحقق من الجلسة</span></div>
         </div>
-        <button class="main-btn" id="st1Btn" onclick="goToScan()" disabled>تحقق الآن</button>
       </div>
 
-      <!-- مرحلة 2 -->
+      <!-- Step 2: Toggle switch confirm -->
       <div class="step" id="st2">
-        <h3 class="subtitle">🔍 فحص الأمان جارٍ...</h3>
-        <div class="status-item" id="s1">🌀 تحليل المتصفح</div>
-        <div class="status-item" id="s2">🌀 توليد البصمة الرقمية</div>
-        <div class="status-item" id="s3">🌀 فحص قاعدة البيانات</div>
+        <p class="confirm-label">تم فحص جهازك بنجاح<br/>حرّك المفتاح لتأكيد أنك لست روبوت</p>
+
+        <div class="toggle-wrap">
+          <!-- السويتش -->
+          <div class="sw-track" id="swTrack" title="حرّك للتأكيد">
+            <div class="sw-sky"></div>
+
+            <div class="sw-clouds">
+              <div class="sw-cloud swc1"></div>
+              <div class="sw-cloud swc2"></div>
+            </div>
+
+            <div class="sw-stars">
+              <div class="sw-ts"></div><div class="sw-ts"></div><div class="sw-ts"></div>
+              <div class="sw-ts"></div><div class="sw-ts"></div><div class="sw-ts"></div>
+              <div class="sw-ts"></div><div class="sw-ts"></div><div class="sw-ts"></div>
+              <div class="sw-ts"></div>
+            </div>
+
+            <!-- خطوط متحركة كبيرة في المسار - اتجاه معاكس -->
+            <div class="sw-moving-lines">
+              <span class="line-arrow">‹</span>
+              <span class="line-arrow">‹</span>
+              <span class="line-arrow">‹</span>
+            </div>
+
+            <div class="sw-knob" id="swKnob">
+              <div class="sw-knob-bg">
+                <!-- سهم 3D احترافي -->
+                <svg class="sw-red-arrow" width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#e8f4f8;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="arrowShadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow dx="3" dy="4" stdDeviation="3" flood-opacity="0.6" flood-color="#000000"/>
+                      <feDropShadow dx="-1.5" dy="-1.5" stdDeviation="2" flood-opacity="0.4" flood-color="#ffffff"/>
+                    </filter>
+                  </defs>
+                  <!-- جسم السهم الرئيسي -->
+                  <path d="M12 35 L48 35" stroke="url(#arrowGrad)" stroke-width="6" fill="none" stroke-linecap="round" filter="url(#arrowShadow)"/>
+                  <!-- رأس السهم الأمامي -->
+                  <path d="M38 20 L58 35 L38 50" stroke="url(#arrowGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#arrowShadow)"/>
+                  <!-- تأثير 3D - ظل سفلي -->
+                  <path d="M12 36 L48 36" stroke="rgba(0,0,0,0.25)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                  <path d="M38 21 L58 36 L38 51" stroke="rgba(0,0,0,0.2)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- إضاءة علوية -->
+                  <path d="M12 34 L48 34" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M38 19 L58 34 L38 49" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                
+                <!-- Check icon -->
+                <svg class="sw-check" width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- علامة صح -->
+                  <path d="M12 25L22 35L38 15" stroke="#4eff91" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="sw-knob-ring"></div>
+            </div>
+
+            <!-- علامة الإنجاز -->
+            <div class="sw-done-check">✅</div>
+          </div>
+
+          <p class="toggle-hint" id="toggleHint">👆 اضغط هنا للتأكيد 👆</p>
+        </div>
       </div>
 
-      <!-- مرحلة 3 -->
+      <!-- Step 3: Result -->
       <div class="step" id="st3">
-        <div id="finalRes"></div>
+        <span class="result-icon" id="resIcon"></span>
+        <div class="result-title" id="resTitle"></div>
+        <div class="result-sub" id="resSub"></div>
+        <div class="redirect-track" id="rdTrack" style="display:none">
+          <div class="redirect-fill" id="rdFill"></div>
+        </div>
+        <div class="redirect-text" id="rdText"></div>
+        <div id="resActions"></div>
       </div>
 
     </div>
@@ -289,99 +661,202 @@
 </div>
 
 <script>
-  // توليد فقاعات لوغو GREEG في الخلفية
+  const API_URL = "https://verify-sigma-wheat.vercel.app/api/verify";
+  const token = new URLSearchParams(window.location.search).get("token") || "";
+  let collectData = {};
+
+  /* ── فقاعات اللوغو ── */
   function spawnBubbles() {
-    const body = document.body;
-    for(let i=0; i<10; i++) {
+    for (let i = 0; i < 10; i++) {
       const b = document.createElement('div');
       b.className = 'logo-bubble';
       const size = Math.random() * 50 + 40 + 'px';
-      b.style.width = size;
-      b.style.height = size;
-      b.style.left = Math.random() * 100 + '%';
-      b.style.animationDuration = (Math.random() * 5 + 7) + 's';
-      b.style.animationDelay = Math.random() * 5 + 's';
-      body.appendChild(b);
+      b.style.cssText = `width:${size};height:${size};left:${Math.random()*100}%;animation-duration:${Math.random()*5+7}s;animation-delay:${Math.random()*5}s;`;
+      document.body.appendChild(b);
     }
   }
   spawnBubbles();
 
-  let verified = false;
-  const API_URL = "https://verify-sigma-wheat.vercel.app/api/verify";
-
-  async function runCaptcha() {
-    if (verified) return;
-    const mark = document.getElementById('cMark');
-    mark.innerHTML = '<div style="width:8px; height:8px; background:white; border-radius:50%; animation: pulse 0.5s infinite alternate;"></div>';
-    
-    await new Promise(r => setTimeout(r, 1400));
-    
-    document.getElementById('cBox').classList.add('verified');
-    mark.innerHTML = '<svg class="check-icon" style="display:block" viewBox="0 0 24 24" width="18" height="18"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-    verified = true;
-    document.getElementById('st1Btn').disabled = false;
-    document.getElementById('pBar').style.width = "30%";
+  /* ── Fingerprinting ── */
+  function getCanvasFp() {
+    try {
+      const c = document.createElement('canvas');
+      const ctx = c.getContext('2d');
+      ctx.textBaseline = 'top';
+      ctx.font = '14px Tajawal';
+      ctx.fillText('GREEG_FP🔐', 2, 2);
+      return c.toDataURL().slice(-32);
+    } catch { return 'no-canvas'; }
   }
-
-  async function goToScan() {
-    document.getElementById('st1').classList.remove('active');
-    document.getElementById('st2').classList.add('active');
-    
-    const items = ['s1', 's2', 's3'];
-    for (let i = 0; i < items.length; i++) {
-      await new Promise(r => setTimeout(r, 900));
-      const el = document.getElementById(items[i]);
-      el.classList.add('done');
-      el.innerHTML = "✅ " + el.innerText.replace('🌀 ', '');
-      document.getElementById('pBar').style.width = (40 + (i * 20)) + "%";
-    }
-    finishVerify();
+  function getWebGL() {
+    try {
+      const cv = document.createElement('canvas');
+      const gl = cv.getContext('webgl') || cv.getContext('experimental-webgl');
+      if (!gl) return 'no-webgl';
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).slice(0,40) : 'unknown';
+    } catch { return 'no-webgl'; }
   }
-
-  async function finishVerify() {
-    const payload = {
-      token: new URLSearchParams(window.location.search).get("token") || "ADVANCED_GREEG",
+  function collect() {
+    collectData = {
+      token,
+      fingerprint: navigator.userAgent.slice(0,60) + screen.width + screen.height + navigator.language,
+      canvasFp: getCanvasFp(),
+      webglRenderer: getWebGL(),
+      audioFp: 'na',
+      storageFp: (() => { try { localStorage.setItem('_g','1'); return localStorage.getItem('_g')||'no'; } catch { return 'blocked'; } })(),
+      cookieFp: navigator.cookieEnabled ? 'enabled' : 'disabled',
+      platform: navigator.platform || 'unknown',
+      screenW: screen.width,
+      screenH: screen.height,
       userAgent: navigator.userAgent,
-      screen: `${window.screen.width}x${window.screen.height}`
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     };
+  }
 
+  /* ── Scan animation ── */
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+  function setProgress(p) { document.getElementById('pBar').style.width = p + '%'; }
+  function switchStep(a, b) {
+    document.getElementById(a).classList.remove('active');
+    document.getElementById(b).classList.add('active');
+  }
+
+  async function runScan() {
+    collect();
+    const ids = ['sc1','sc2','sc3','sc4'];
+    const progs = [15, 35, 55, 72];
+    for (let i = 0; i < ids.length; i++) {
+      const el = document.getElementById(ids[i]);
+      el.classList.add('visible');
+      const iconEl = el.querySelector('span');
+      const origIcon = iconEl.textContent;
+      iconEl.outerHTML = '<div class="scan-spinner"></div>';
+      await delay(700 + Math.random() * 400);
+      const spinner = el.querySelector('.scan-spinner');
+      if (spinner) spinner.outerHTML = `<span>${origIcon}</span>`;
+      el.classList.add('done');
+      setProgress(progs[i]);
+      await delay(180);
+    }
+    await delay(300);
+    switchStep('st1','st2');
+    setProgress(78);
+  }
+
+  /* ── Toggle Switch Logic ── */
+  const swTrack = document.getElementById('swTrack');
+  let toggled = false;
+
+  function activateToggle() {
+    if (toggled) return;
+    toggled = true;
+    swTrack.classList.add('human');
+    document.getElementById('toggleHint').textContent = '✅ تم التأكيد! جارٍ التحقق...';
+    setProgress(88);
+    setTimeout(async () => {
+      swTrack.classList.add('verified');
+      setProgress(92);
+      await delay(600);
+      await sendVerify();
+    }, 700);
+  }
+
+  /* Click / Tap */
+  swTrack.addEventListener('click', activateToggle);
+
+  /* Drag / Swipe detection */
+  let dragStartX = null;
+  swTrack.addEventListener('mousedown', e => { dragStartX = e.clientX; });
+  swTrack.addEventListener('touchstart', e => { dragStartX = e.touches[0].clientX; }, { passive: true });
+  swTrack.addEventListener('mouseup', e => {
+    if (dragStartX !== null && e.clientX - dragStartX > 30) activateToggle();
+    dragStartX = null;
+  });
+  swTrack.addEventListener('touchend', e => {
+    if (dragStartX !== null && e.changedTouches[0].clientX - dragStartX > 30) activateToggle();
+    dragStartX = null;
+  });
+
+  /* ── API call ── */
+  async function sendVerify() {
     try {
       const r = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(collectData)
       });
       const data = await r.json();
-      renderResult(data.success, data.message);
-    } catch (e) {
-      renderResult(false, "حدث خطأ في الاتصال");
+      showResult(data.success, data.message, data.banned);
+    } catch {
+      showResult(false, 'حدث خطأ في الاتصال. يرجى المحاولة مجدداً.', false);
     }
   }
 
-  function renderResult(ok, msg) {
-    document.getElementById('st2').classList.remove('active');
-    document.getElementById('st3').classList.add('active');
-    document.getElementById('pBar').style.width = "100%";
-    
-    const res = document.getElementById('finalRes');
+  /* ── Result ── */
+  function showResult(ok, msg, banned) {
+    setProgress(100);
+    switchStep('st2','st3');
+
+    const icon = document.getElementById('resIcon');
+    const title = document.getElementById('resTitle');
+    const sub = document.getElementById('resSub');
+    const actions = document.getElementById('resActions');
+
     if (ok) {
-      res.innerHTML = `
-        <div style="font-size:75px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">✅</div>
-        <h2 class="title">تم التحقق!</h2>
-        <p class="subtitle" style="font-size:16px;">تم فحص بياناتك بنجاح. يمكنك العودة الآن.</p>
-      `;
+      icon.textContent = '✅';
+      title.textContent = 'تم التحقق بنجاح!';
+      sub.textContent = 'تم فحص بياناتك بنجاح. سيتم توجيهك إلى Discord تلقائياً.';
+
+      const rdTrack = document.getElementById('rdTrack');
+      const rdFill = document.getElementById('rdFill');
+      const rdText = document.getElementById('rdText');
+      rdTrack.style.display = 'block';
+
+      let count = 4;
+      rdText.textContent = `سيتم الإغلاق خلال ${count} ثوانٍ...`;
+      rdFill.style.transition = `width ${count}s linear`;
+      setTimeout(() => { rdFill.style.width = '100%'; }, 50);
+
+      const iv = setInterval(() => {
+        count--;
+        if (count > 0) {
+          rdText.textContent = `سيتم الإغلاق خلال ${count} ثوانٍ...`;
+        } else {
+          clearInterval(iv);
+          rdText.textContent = 'جارٍ التوجيه...';
+          redirectToDiscord();
+        }
+      }, 1000);
+
+      actions.innerHTML = `<a href="discord://" class="open-discord-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 13.89 13.89 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.07 13.07 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        فتح Discord
+      </a>`;
+
+    } else if (banned) {
+      icon.textContent = '🚫';
+      title.textContent = 'محظور';
+      title.style.color = '#ff4757';
+      sub.textContent = msg || 'جهازك أو شبكتك محظورة من هذا السيرفر.';
     } else {
-      res.innerHTML = `
-        <div style="font-size:75px;">⚠️</div>
-        <h2 class="title" style="color:#ff4757;">فشل التحقق</h2>
-        <p class="subtitle" style="font-size:16px;">${msg || 'يرجى المحاولة مجدداً'}</p>
-      `;
+      icon.textContent = '⚠️';
+      title.textContent = 'فشل التحقق';
+      title.style.color = '#ffd700';
+      sub.textContent = msg || 'يرجى التواصل مع إدارة السيرفر.';
     }
   }
-</script>
 
-<style>
-  @keyframes pulse { to { transform: scale(1.5); opacity: 0.5; } }
-</style>
+  function redirectToDiscord() {
+    window.location.href = 'discord://';
+    setTimeout(() => {
+      try { window.close(); } catch(e) {}
+      document.getElementById('rdText').textContent = 'يمكنك إغلاق هذه الصفحة الآن.';
+    }, 1200);
+  }
+
+  /* ── Start ── */
+  window.addEventListener('load', () => setTimeout(runScan, 400));
+</script>
 </body>
 </html>
