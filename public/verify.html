@@ -2,7 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#1db954"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <title>GREEG — التحقق</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet"/>
 <style>
@@ -23,13 +27,17 @@
   body {
     font-family: 'Tajawal', sans-serif;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow-x: hidden;
     position: relative;
     background: #1a1a1a;
+    -webkit-perspective: 1000px;
     perspective: 1000px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* الخلفية الأصلية */
@@ -67,9 +75,10 @@
     position: fixed;
     top: 50%;
     left: 50%;
+    -webkit-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
-    width: 65vh;
-    height: 65vh;
+    width: min(65vh, 90vw);
+    height: min(65vh, 90vh);
     background: url('https://i.imgur.com/Owaf8Cs.png') center/contain no-repeat;
     opacity: 0.08;
     z-index: 0;
@@ -81,9 +90,10 @@
     position: relative;
     z-index: 10;
     isolation: isolate;
-    width: 92%;
+    width: min(92vw, 440px);
     max-width: 440px;
-    margin: 20px auto;
+    margin: clamp(15px, 5vh, 40px) auto;
+    padding: 0 10px;
   }
 
   .gold-frame {
@@ -103,10 +113,13 @@
 
   .card {
     background: linear-gradient(145deg, #2ecc71, #27ae60);
-    border-radius: 30px;
-    padding: 40px 25px;
+    border-radius: clamp(20px, 8vw, 30px);
+    padding: clamp(25px, 5vw, 40px) clamp(15px, 4vw, 25px);
     text-align: center;
     position: relative;
+    -webkit-box-shadow:
+      inset 0 8px 20px rgba(255,255,255,0.4),
+      inset 0 -8px 15px rgba(0,0,0,0.3);
     box-shadow:
       inset 0 8px 20px rgba(255,255,255,0.4),
       inset 0 -8px 15px rgba(0,0,0,0.3);
@@ -239,10 +252,15 @@
   /* الـ track الخاص بالسويتش */
   .sw-track {
     position: relative;
-    width: 200px;
-    height: 90px;
-    border-radius: 60px;
+    width: clamp(180px, 90vw, 280px);
+    height: clamp(70px, 15vw, 90px);
+    border-radius: clamp(45px, 8vw, 60px);
     background: linear-gradient(135deg, #b8d9f8, #e8f4ff);
+    -webkit-box-shadow:
+      8px 8px 24px rgba(0,0,0,0.4),
+      -4px -4px 16px rgba(255,255,255,0.15),
+      inset 4px 4px 12px rgba(0,0,0,0.2),
+      inset -4px -4px 12px rgba(255,255,255,0.1);
     box-shadow:
       8px 8px 24px rgba(0,0,0,0.4),
       -4px -4px 16px rgba(255,255,255,0.15),
@@ -250,10 +268,13 @@
       inset -4px -4px 12px rgba(255,255,255,0.1);
     overflow: hidden;
     cursor: pointer;
+    -webkit-transition: background var(--transition), box-shadow var(--transition);
     transition: background var(--transition), box-shadow var(--transition);
     border: 3px solid rgba(255,255,255,0.35);
-    user-select: none;
     -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .sw-track.human {
@@ -378,9 +399,10 @@
   .sw-track.human .sw-moving-lines { opacity: 0; }
 
   .line-arrow {
-    font-size: 36px;
+    font-size: clamp(24px, 5vw, 36px);
     font-weight: bold;
     color: #d9a5a5;
+    -webkit-animation: lineFlow 1.5s ease-in-out infinite;
     animation: lineFlow 1.5s ease-in-out infinite;
   }
   .line-arrow:nth-child(1) { animation-delay: 0s; }
@@ -398,19 +420,26 @@
     position: absolute;
     top: 7px;
     left: 7px;
-    width: 74px;
-    height: 74px;
+    width: clamp(60px, 12vw, 74px);
+    height: clamp(60px, 12vw, 74px);
     border-radius: 50%;
+    -webkit-transition: -webkit-transform var(--transition), -webkit-transform 0.2s ease, box-shadow 0.2s ease;
     transition: transform var(--transition), scale 0.2s ease, box-shadow 0.2s ease;
     z-index: 5;
     display: flex;
     align-items: center;
     justify-content: center;
+    -webkit-perspective: 1000px;
     perspective: 1000px;
     cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
   .sw-knob:active {
-    scale: 0.92;
+    -webkit-transform: scale(0.92);
+    transform: scale(0.92);
+    -webkit-filter: brightness(1.1);
     filter: brightness(1.1);
   }
   .sw-track.human .sw-knob { transform: translateX(108px); }
